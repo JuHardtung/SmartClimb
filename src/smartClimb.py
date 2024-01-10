@@ -100,6 +100,7 @@ def getParsedDirectionString(unparsedString):
 
 def playSound(voiceLine):
     """Reads a text string out loud with google text to speech (gTTS)"""
+    print(voiceLine)
     tts = gTTS(voiceLine, lang='en')
     fp = BytesIO()
     tts.write_to_fp(fp)
@@ -134,17 +135,16 @@ def smartClimb(null):
         directionString = getParsedDirectionString(parsedText["next"])
         
         if (parsedText["num"] < NEXT_HOLD_NUM):
-            print("Already used that hold")
-            playSound("Already used that hold")
+            playSound("You already used that hold")
             smartClimb(null)
             
         elif (parsedText["num"] > NEXT_HOLD_NUM):
-            print("You skipped a hold but you can just keep climbing")
             playSound("You skipped a hold but you can just keep climbing")
             playSound(parsedText["type"] + directionString)
             
         elif (parsedText["num"] == NEXT_HOLD_NUM):        
             playSound(parsedText["type"] + directionString)
+      
         
         NEXT_HOLD_NUM = NEXT_HOLD_NUM + 1
         smartClimb(null)
