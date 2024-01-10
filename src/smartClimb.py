@@ -59,42 +59,47 @@ time.sleep(2)
 GPIO.output(Buzzer_PIN,GPIO.LOW)
 
 def getDirection(shortDir):
-        if shortDir == "t":
-            return "Top"
-        elif shortDir == "tr":
-            return "Top Right"
-        elif shortDir == "r":
-            return "Right"
-        elif shortDir == "br":
-            return "Bottom Right"
-        elif shortDir == "b":
-            return "Bottom"
-        elif shortDir == "bl":
-            return "Bottom Left"
-        elif shortDir == "l":
-            return "Left"
-        elif shortDir == "tl":
-            return "Top Left"
-        else:
-            return "Unknown Direction"
+    """Takes unparsed directiuon string and parses it to a parsed direction String for later TTS"""
+    if shortDir == "t":
+        return "Top"
+    elif shortDir == "tr":
+        return "Top Right"
+    elif shortDir == "r":
+        return "Right"
+    elif shortDir == "br":
+        return "Bottom Right"
+    elif shortDir == "b":
+        return "Bottom"
+    elif shortDir == "bl":
+        return "Bottom Left"
+    elif shortDir == "l":
+        return "Left"
+    elif shortDir == "tl":
+        return "Top Left"
+    else:
+        return "Unknown Direction"
 
 def getDistance(shortDist):
+    """Takes unparsed distance string and returns a parsed string with full distance unit for later TTS"""
     splitDistString = re.split('(\d+)',shortDist)
     
-    unit = "test"
-    print(splitDistString)
+    unit = "Centimeters"
     if splitDistString[2] == "cm":
         unit = "Centimeters"
+    elif splitDistString[2] == "in":
+        unit = "Inches"
         
     return splitDistString[1] + unit
         
 
 def getParsedDirectionString(unparsedString):
+    """Takes unparsed String data and parses it to proper distance + direction for later TTS """
     splitString = unparsedString.split()
     
     return getDistance(splitString[0]) + getDirection(splitString[1])
 
 def playSound(voiceLine):
+    """Reads a text string out loud with google text to speech (gTTS)"""
     tts = gTTS(voiceLine, lang='en')
     fp = BytesIO()
     tts.write_to_fp(fp)
@@ -104,35 +109,57 @@ def playSound(voiceLine):
     play(song)
 
 
+
+NEXT_HOLD_NUM = 1
+
 def smartClimb(null):
+    global NEXT_HOLD_NUM
+    """The main climbing loop"""
     print("You can now start climbing.")
+    
+    #show green status LED to show that "climbing mode" is activated
     GPIO.output(LED_ROT,GPIO.LOW)
     GPIO.output(LED_GRUEN,GPIO.HIGH)
     GPIO.output(LED_BLAU,GPIO.LOW)
+        
     try:
         id, text = reader.read()
-        print(id)
-        print(text)
+        
         parsedText = ast.literal_eval(text)
         
-        #playSound(parsedText["type"])
-        directionString = getParsedDirectionString(parsedText["next"])
-        playSound(parsedText["type"] + directionString)
+        if (parsedText["num"] < NEXT_HOLD_NUM):
+            print("Already used that hold")
+            playSound("Already used that hold")
+            smartClimb(null)
+            
+        elif (parsedText["num"] > NEXT_HOLD_NUM):
+            print("You skipped a hold but you can just keep climbing")
+            directionString = getParsedDirectionString(parsedText["next"])
+            playSound("You skipped a hold but you can just keep climbing")
+            playSound(parsedText["type"] + directionString)
+            
+        elif (parsedText["num"] == NEXT_HOLD_NUM):        
+            directionString = getParsedDirectionString(parsedText["next"])
+            playSound(parsedText["type"] + directionString)
         
+        NEXT_HOLD_NUM = NEXT_HOLD_NUM + 1
         smartClimb(null)
         
     finally:
         GPIO.cleanup()
 
-# When a signal is detected (falling signal edge) the output function is executed
+# When the button is pressed, start "climbing mode"
 GPIO.add_event_detect(Button_PIN, GPIO.FALLING, callback=smartClimb, bouncetime=100) 
 
 
 print("SmartClimb system is running. Press the button once you want to start climbing!")
 
+# show blue status LED to show that the program is running
 GPIO.output(LED_ROT,GPIO.LOW)
 GPIO.output(LED_GRUEN,GPIO.LOW)
 GPIO.output(LED_BLAU,GPIO.HIGH)
+
+
 # main program loop
 try:
     while True:
@@ -141,4 +168,3 @@ try:
 # clean up after the program is finished
 except KeyboardInterrupt:
     GPIO.cleanup()
-
