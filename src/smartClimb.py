@@ -127,6 +127,12 @@ def smartClimb(null):
         
         parsedText = ast.literal_eval(text)
         
+        if (parsedText["num"] == 999):
+            playSound("You have reached the top! WOoow you are great")
+            return
+            
+        directionString = getParsedDirectionString(parsedText["next"])
+        
         if (parsedText["num"] < NEXT_HOLD_NUM):
             print("Already used that hold")
             playSound("Already used that hold")
@@ -134,12 +140,10 @@ def smartClimb(null):
             
         elif (parsedText["num"] > NEXT_HOLD_NUM):
             print("You skipped a hold but you can just keep climbing")
-            directionString = getParsedDirectionString(parsedText["next"])
             playSound("You skipped a hold but you can just keep climbing")
             playSound(parsedText["type"] + directionString)
             
         elif (parsedText["num"] == NEXT_HOLD_NUM):        
-            directionString = getParsedDirectionString(parsedText["next"])
             playSound(parsedText["type"] + directionString)
         
         NEXT_HOLD_NUM = NEXT_HOLD_NUM + 1
