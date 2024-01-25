@@ -10,6 +10,15 @@ For actual deployment and usage of the SmartClimb system you simply have to:
 1. Copy the `smartClimb.py`-file to a RaspberryPi
 2. Run `sudo python3 smartClimb.py`
 
+## Setup to autolaunch after powering on the RaspberryPi
+
+1. Run `sudo crontab -e`
+2. Chose an editor of your choice
+3. To the bottom of the now opened file, enter: `@reboot sleep10; python3 home/pi/Desktop/smartClimb.py &`
+   _(Of cource you need to adjust the path `home/pi/Desktop/` to the location of your smartClimb.py-file)_
+
+This command launches after the RaspberryPi has been powered on. `sleep10` waits 10 seconds before running the script, to give the RaspberryPi time to load all dependencies first. Then the `smartClimb.py` is launched and after it the `&` signalized that the RaspberryPi should run everything else as normal.
+
 ## Hardware
 
 The SmartClimb-System was developed and tested with the following hardware:
