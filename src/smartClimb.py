@@ -54,6 +54,7 @@ GPIO.setup(LED_BLAU, GPIO.OUT, initial= GPIO.LOW)
 
 reader = SimpleMFRC522()
 
+#if button pressed:
 GPIO.output(Buzzer_PIN, GPIO.HIGH)
 time.sleep(2)
 GPIO.output(Buzzer_PIN,GPIO.LOW)
@@ -122,7 +123,9 @@ def smartClimb():
     GPIO.output(LED_GRUEN,GPIO.HIGH)
     GPIO.output(LED_BLAU,GPIO.LOW)
     
-    playSound("You can now start climbing.")
+    if (NEXT_HOLD_NUM == 1):
+        playSound("You can now start climbing.")
+    
         
     id, text = reader.read()
             
