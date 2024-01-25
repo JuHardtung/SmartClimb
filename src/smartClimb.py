@@ -7,6 +7,7 @@ from pydub import AudioSegment
 from pydub.playback import play
 import ast
 import re
+from threading import Thread
 
 """
 Button:
@@ -53,7 +54,6 @@ GPIO.setup(LED_BLAU, GPIO.OUT, initial= GPIO.LOW)
 
 reader = SimpleMFRC522()
 
-#if button pressed:
 GPIO.output(Buzzer_PIN, GPIO.HIGH)
 time.sleep(2)
 GPIO.output(Buzzer_PIN,GPIO.LOW)
@@ -113,62 +113,71 @@ def playSound(voiceLine):
 
 NEXT_HOLD_NUM = 1
 
-def smartClimb(null):
+def smartClimb():
     global NEXT_HOLD_NUM
     """The main climbing loop"""
-    print("You can now start climbing.")
     
     #show green status LED to show that "climbing mode" is activated
     GPIO.output(LED_ROT,GPIO.LOW)
     GPIO.output(LED_GRUEN,GPIO.HIGH)
     GPIO.output(LED_BLAU,GPIO.LOW)
+    
+    playSound("You can now start climbing.")
         
-    try:
-        id, text = reader.read()
-        
-        parsedText = ast.literal_eval(text)
-        
-        if (parsedText["num"] == 999):
-            playSound("You have reached the top! WOoow you are great")
-            return
+    id, text = reader.read()
             
-        directionString = getParsedDirectionString(parsedText["next"])
-        
-        if (parsedText["num"] < NEXT_HOLD_NUM):
-            playSound("You already used that hold")
-            smartClimb(null)
+    parsedText = ast.literal_eval(text)
             
-        elif (parsedText["num"] > NEXT_HOLD_NUM):
-            playSound("You skipped a hold but you can just keep climbing")
-            playSound(parsedText["type"] + directionString)
+    if (parsedText["num"] == 999):
+        playSound("You have reached the top!")
+        main()
+             
+    directionString = getParsedDirectionString(parsedText["next"])
+           
+    if (parsedText["num"] < NEXT_HOLD_NUM):
+        playSound("You already used that hold")
+        smartClimb()
+                
+    elif (parsedText["num"] > NEXT_HOLD_NUM):
+        playSound("You skipped a hold but you can just keep climbing")
+        playSound(parsedText["type"] + directionString)
+                
+    elif (parsedText["num"] == NEXT_HOLD_NUM):        
+        playSound(parsedText["type"] + directionString)
             
-        elif (parsedText["num"] == NEXT_HOLD_NUM):        
-            playSound(parsedText["type"] + directionString)
-      
+    NEXT_HOLD_NUM = NEXT_HOLD_NUM + 1
+    smartClimb()
+              
         
-        NEXT_HOLD_NUM = NEXT_HOLD_NUM + 1
-        smartClimb(null)
-        
-    finally:
-        GPIO.cleanup()
+    
+def press_detected(null):
+    """Detects a button press and runs the smartClimb system"""
+    Thread(target = smartClimb).start()
+
 
 # When the button is pressed, start "climbing mode"
-GPIO.add_event_detect(Button_PIN, GPIO.FALLING, callback=smartClimb, bouncetime=100) 
+GPIO.add_event_detect(Button_PIN, GPIO.FALLING, callback=press_detected, bouncetime=1000) 
 
 
-print("SmartClimb system is running. Press the button once you want to start climbing!")
+def main():
 
-# show blue status LED to show that the program is running
-GPIO.output(LED_ROT,GPIO.LOW)
-GPIO.output(LED_GRUEN,GPIO.LOW)
-GPIO.output(LED_BLAU,GPIO.HIGH)
+    # show blue status LED to show that the program is running
+    GPIO.output(LED_ROT,GPIO.LOW)
+    GPIO.output(LED_GRUEN,GPIO.LOW)
+    GPIO.output(LED_BLAU,GPIO.HIGH)
+    
+    playSound("Press the button once you want to start climbing!")
 
 
-# main program loop
-try:
-    while True:
-        time.sleep(1)
-  
-# clean up after the program is finished
-except KeyboardInterrupt:
-    GPIO.cleanup()
+    # main program loop
+    try:
+        while True:
+            time.sleep(1)
+      
+    # clean up after the program is finished
+    except KeyboardInterrupt:
+        GPIO.cleanup()
+      
+        
+if __name__ == '__main__':
+    main()
