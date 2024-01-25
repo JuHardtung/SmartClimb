@@ -21,6 +21,10 @@ The SmartClimb-System was developed and tested with the following hardware:
 5. Joy-It KY-009 RGB SMD-LED
 6. Speaker/Headphones connected to the RaspberryPi's 3.5mm stereo output and composite video port
 
+The picture below shows the circuit diagram so you can recreate the whole system by yourself.
+
+![UbiComp](https://github.com/JuHardtung/SmartClimb/assets/15029310/fd33ae10-0aa4-40c1-ae2a-13f58aa8efe9)
+
 
 ## Authors
 
