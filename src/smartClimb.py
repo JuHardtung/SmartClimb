@@ -133,6 +133,7 @@ def smartClimb():
             
     if (parsedText["num"] == 999):
         playSound("You have reached the top!")
+        NEXT_HOLD_NUM = 1
         main()
              
     directionString = getParsedDirectionString(parsedText["next"])
