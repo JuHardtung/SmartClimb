@@ -143,8 +143,8 @@ def smartClimb():
     directionString = getParsedDirectionString(parsedText["next"])
            
     if (parsedText["num"] < NEXT_HOLD_NUM):
-        playSound("You already used that hold")
-        playSound(parsedText["type"] + directionString)
+        #playSound("You already used that hold")
+        #playSound(parsedText["type"] + directionString)
         smartClimb()
                 
     elif (parsedText["num"] > NEXT_HOLD_NUM):
