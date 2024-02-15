@@ -113,9 +113,11 @@ def playSound(voiceLine):
 
 
 NEXT_HOLD_NUM = 1
+SMART_CLIMB_RUNNING = False
 
 def smartClimb():
     global NEXT_HOLD_NUM
+    global SMART_CLIMB_RUNNING
     """The main climbing loop"""
     
     #show green status LED to show that "climbing mode" is activated
@@ -123,10 +125,11 @@ def smartClimb():
     GPIO.output(LED_GRUEN,GPIO.HIGH)
     GPIO.output(LED_BLAU,GPIO.LOW)
     
+    SMART_CLIMB_RUNNING = True
+    
     if (NEXT_HOLD_NUM == 1):
         playSound("You can now start climbing.")
     
-        
     id, text = reader.read()
             
     parsedText = ast.literal_eval(text)
@@ -134,16 +137,18 @@ def smartClimb():
     if (parsedText["num"] == 999):
         playSound("You have reached the top!")
         NEXT_HOLD_NUM = 1
+        SMART_CLIMB_RUNNING = False
         main()
              
     directionString = getParsedDirectionString(parsedText["next"])
            
     if (parsedText["num"] < NEXT_HOLD_NUM):
         playSound("You already used that hold")
+        playSound(parsedText["type"] + directionString)
         smartClimb()
                 
     elif (parsedText["num"] > NEXT_HOLD_NUM):
-        playSound("You skipped a hold but you can just keep climbing")
+        #playSound("You skipped a hold but you can just keep climbing")
         playSound(parsedText["type"] + directionString)
                 
     elif (parsedText["num"] == NEXT_HOLD_NUM):        
@@ -156,7 +161,10 @@ def smartClimb():
     
 def press_detected(null):
     """Detects a button press and runs the smartClimb system"""
-    Thread(target = smartClimb).start()
+    global SMART_CLIMB_RUNNING
+    
+    if (SMART_CLIMB_RUNNING is False):
+        Thread(target = smartClimb).start()
 
 
 # When the button is pressed, start "climbing mode"
