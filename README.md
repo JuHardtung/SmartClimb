@@ -37,7 +37,7 @@ The picture below shows the circuit diagram so you can recreate the whole system
 
 ## Testing
 
-The Prototype was tested in the  [2t Kletter- und Boulderhalle](https://www.2tklettern.de/). A video of this testing can be found [here](https://th-koeln.sciebo.de/s/Gf3NmV6bWRpQXVX#/files_mediaviewer/UbiComp-Testtag.mp4).
+The Prototype was tested in the  [2t Kletter- und Boulderhalle](https://www.2tklettern.de/). A video of this testing can be found [here](https://youtu.be/4ytUx1dRwLQ?si=VMUUZwbRYJnUahgd).
 
 
 ## Authors
