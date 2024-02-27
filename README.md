@@ -13,7 +13,7 @@ For actual deployment and usage of the SmartClimb system you simply have to:
 ## Setup to autolaunch after powering on the RaspberryPi
 
 1. Run `sudo crontab -e`
-2. Chose an editor of your choice
+2. Choose an editor of your choice
 3. To the bottom of the now opened file, enter: `@reboot sleep10; python3 home/pi/Desktop/smartClimb.py &`
    
    _(Of cource you need to adjust the path `home/pi/Desktop/` to the location of your smartClimb.py-file)_
