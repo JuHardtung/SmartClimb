@@ -35,6 +35,10 @@ The picture below shows the circuit diagram so you can recreate the whole system
 
 ![UbiComp](https://github.com/JuHardtung/SmartClimb/assets/15029310/fd33ae10-0aa4-40c1-ae2a-13f58aa8efe9)
 
+## Testing
+
+The Prototype was tested in the  [2t Kletter- und Boulderhalle](https://www.2tklettern.de/). A video of this testing can be found [here](https://th-koeln.sciebo.de/s/Gf3NmV6bWRpQXVX).
+
 
 ## Authors
 
